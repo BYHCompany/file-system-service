@@ -1,0 +1,10 @@
+// Modules
+node_modules
+
+//Ide settings
+.vscode
+.idea
+
+//ENV
+.env.development
+.env.production
