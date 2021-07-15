@@ -16,7 +16,8 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "debug": "cross-env NODE_ENV=debug node index.js"
+    "debug": "cross-env NODE_ENV=debug node index.js",
+    "prod": "cross-env NODE_ENV=production pm2 start index.js --attach"
   },
   "devDependencies": {
     "eslint": "^7.30.0",

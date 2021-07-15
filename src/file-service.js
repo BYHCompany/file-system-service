@@ -14,7 +14,7 @@ class FileService {
 
     const full = path.join(filePath, fileName);
 
-    return `http://localhost:${process.env.PORT}/${full}`;
+    return `${process.env.SERVER_DOMAIN}:${process.env.PORT}/${full}`;
   }
 
   async saveFilesOnDisk(files, userID, advertID) {
