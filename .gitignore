@@ -8,3 +8,10 @@ node_modules
 //ENV
 .env.development
 .env.production
+.env.debug
+
+//Static
+static
+
+//Logs
+logs
