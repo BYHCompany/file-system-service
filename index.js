@@ -1,6 +1,5 @@
 //Config dotenv for multi env
-const NODE_ENV = process.env.NODE_ENV;
-require('dotenv').config({ path: `.env.${NODE_ENV}` });
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` });
 
 //Imports
 const cors = require('cors');
@@ -59,7 +58,5 @@ app.use((req) => {
 
 //Listen port
 app.listen(PORT, () => {
-  console.log(`Server is listening ${PORT} port in ${NODE_ENV} mode!`);
+  console.log(`Server is listening ${PORT} port in ${process.env.NODE_ENV} mode!`);
 });
-
-module.exports = { NODE_ENV };
