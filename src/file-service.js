@@ -1,28 +1,44 @@
 const fs = require('fs');
+const asyncFS = fs.promises;
 const path = require('path');
 const ApiError = require('./exceptions/api-error');
+const directoryService = require('./directory-service');
 
 class FileService {
+  /**
+   * Save file on disk by userID, advertID
+   *
+   * @param file: File
+   * @param filePath: string (userID/advertID)
+   * @param fileName: string
+   * @param staticPath: string (path to static folder)
+   */
   async saveFileOnDisk(file, filePath, fileName = 'file.jpg', staticPath) {
     const directory = path.join(staticPath, filePath);
 
     if (!fs.existsSync(directory)) {
-      fs.mkdirSync(directory, { recursive: true });
+      await directoryService.makeDirectory(directory);
     }
 
-    fs.writeFileSync(path.join(directory, fileName), file.buffer);
+    await asyncFS.writeFile(path.join(directory, fileName), file.buffer);
 
     const full = path.join(filePath, fileName);
 
     return `${process.env.SERVER_DOMAIN}:${process.env.PORT}/${full}`;
   }
 
+  /**
+   * Save files on disk by userID, advertID
+   * @param files: File[]
+   * @param userID: number
+   * @param advertID: number
+   */
   async saveFilesOnDisk(files, userID, advertID) {
     try {
       const pathToStatic = path.resolve(__dirname, '..', 'static');
 
       if (!fs.existsSync(pathToStatic)) {
-        fs.mkdirSync(pathToStatic, { recursive: true });
+        directoryService.makeDirectory(pathToStatic);
       }
 
       let fileNames = [];
@@ -42,9 +58,49 @@ class FileService {
         );
         return fileNames;
       }
+
+      return null;
     } catch (error) {
       throw ApiError.InternalServerError();
     }
+  }
+
+  /**
+   * Delete folder
+   * @param path: string
+   */
+  async deleteFile(pathToDelete) {
+    if (!pathToDelete) {
+      throw ApiError.BadRequest('No path');
+    }
+
+    const fullPath = path.join(__dirname, '..', 'static', pathToDelete);
+
+    if (!fs.existsSync(fullPath)) {
+      return null;
+    }
+
+    if ((await asyncFS.stat(fullPath)).isDirectory()) {
+      await asyncFS.rmdir(fullPath, { recursive: true });
+    } else {
+      await asyncFS.rm(fullPath);
+    }
+
+    return pathToDelete;
+  }
+
+  /**
+   * Delete all folder paths
+   * @param paths: string[]
+   */
+  async deleteFiles(paths) {
+    const deletedLinks = [];
+
+    for (let i = 0; i < paths.length; i++) {
+      deletedLinks.push(await this.deleteFile(paths[i]));
+    }
+
+    return deletedLinks;
   }
 }
 

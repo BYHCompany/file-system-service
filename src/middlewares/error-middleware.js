@@ -3,9 +3,8 @@ const logger = require('../logger');
 
 //Error handler
 module.exports = function (err, req, res, next) {
-  logger.error('Error');
-
   if (err instanceof ApiError) {
+    logger.error(`${err.message}: ${err.stack}`);
     return res.status(err.status).json({ message: err.message, errors: err.errors });
   }
 
