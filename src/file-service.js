@@ -13,8 +13,10 @@ class FileService {
    * @param fileName: string
    * @param staticPath: string (path to static folder)
    */
-  async saveFileOnDisk(file, filePath, fileName = 'file.jpg', staticPath) {
+  async saveFileOnDisk(file, filePath, fileName = 'file.webp', staticPath) {
     const directory = path.join(staticPath, filePath);
+
+    console.log(file);
 
     if (!fs.existsSync(directory)) {
       await directoryService.makeDirectory(directory);
@@ -46,7 +48,7 @@ class FileService {
       if (files.length > 1 && advertID) {
         for (let i = 0; i < files.length; i++) {
           const filePath = `${userID}${path.sep}${advertID}`;
-          const fileName = `${i}.jpg`;
+          const fileName = `advert-${i}.webp`;
           fileNames.push(await this.saveFileOnDisk(files[i], filePath, fileName, pathToStatic));
         }
         return fileNames;
@@ -54,7 +56,7 @@ class FileService {
 
       if (files.length === 1 && !advertID) {
         fileNames.push(
-          await this.saveFileOnDisk(files[0], `${userID}`, `avatar-${userID}.jpg`, pathToStatic),
+          await this.saveFileOnDisk(files[0], `${userID}`, `avatar-${userID}.webp`, pathToStatic),
         );
         return fileNames;
       }
